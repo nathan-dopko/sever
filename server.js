@@ -2,9 +2,17 @@ const express = require("express");
 const cors = require("cors");
 const fetch = require("node-fetch");
 const app = express();
-const port = 3001;
+const port = process.env.PORT || 3001;
 
-app.use(cors());
+// Configure CORS to allow requests from any origin
+app.use(
+  cors({
+    origin: "*", // In production, you might want to restrict this to specific domains
+    methods: ["GET", "POST", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
+
 app.use(express.json());
 
 // Ignore JSON parsing errors from Chrome extensions
@@ -40,6 +48,11 @@ app.get("/api/message-stats", async (req, res) => {
   }
 });
 
+// Add a health check endpoint
+app.get("/health", (req, res) => {
+  res.status(200).send("OK");
+});
+
 app.listen(port, () => {
-  console.log(`Proxy server running at http://localhost:${port}`);
+  console.log(`Server running on port ${port}`);
 });
